@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetGains - Vertriebsstruktur Visualisierung</title>
+    
+    <!-- Typografie: Druk Wide Bold (Headlines) & Inter (Body) -->
+    <link href="https://fonts.cdnfonts.com/css/druk-wide-bold" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Screenshot Dashboard CI Farben */
+            --bg-color: #070b0e;
+            --panel-bg: #10161c;
+            --panel-border: #1a242c;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --text-main: #ffffff;
+            --text-muted: #7d8da1;
+            
+            /* Akzentfarben (High Ticket CI) */
+            --neon-cyan: #00f0ff;
+            --netgains-color: #00f0ff;
+            --v1-color: #8b5cf6;
+            --v2-color: #fbbf24;
+            --v3-color: #ec4899;
+            
+            /* Fonts */
+            --font-head: 'Druk Wide Bold', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.05) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            padding: 3rem 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1, h2 {
+            font-family: var(--font-head);
+            color: var(--text-main);
+            text-transform: uppercase;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
+            font-style: italic;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            margin-bottom: 0.5rem;
+        }
+        
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 800;
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            margin-right: 12px;
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .calculator {
+            padding: 25px;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .calculator label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        input {
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--text-main);
+            padding: 12px 20px;
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            width: 220px;
+            outline: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        input:focus {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2), inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .model-card {
+            padding: 40px;
+            margin-bottom: 3rem;
+        }
+
+        .scenario {
+            margin-bottom: 4rem;
+        }
+
+        .scenario:last-child {
+            margin-bottom: 0;
+        }
+
+        .scenario-title {
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* NEU: Reiner visueller Balken */
+        .visual-bar {
+            display: flex;
+            height: 16px; /* Schön schmal und elegant */
+            border-radius: 8px;
+            overflow: hidden;
+            background: #05080a;
+            border: 1px solid var(--panel-border);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
+            margin-bottom: 15px;
+        }
+
+        .bar-segment {
+            height: 100%;
+            transition: width 0.3s ease;
+            border-right: 1px solid rgba(0,0,0,0.4);
+        }
+        .bar-segment:last-child { border-right: none; }
+
+        /* NEU: Daten-Karten Raster */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .data-card {
+            background: var(--card-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle glow based on role */
+        .data-card.card-netgains { box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.05); }
+        .data-card.card-v1 { box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.05); }
+        .data-card.card-v2 { box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.05); }
+        .data-card.card-v3 { box-shadow: inset 0 0 20px rgba(236, 72, 153, 0.05); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255,255,255,0.4);
+        }
+
+        .card-amount {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            color: var(--text-main);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .founder-hint {
+            font-size: 0.6rem;
+            color: var(--netgains-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            border-top: 1px solid rgba(0, 240, 255, 0.2);
+            padding-top: 8px;
+            margin-top: 4px;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Colors */
+        .bg-netgains { background: linear-gradient(135deg, rgba(0, 240, 255, 0.8), rgba(0, 184, 212, 0.8)); }
+        .bg-v1 { background: linear-gradient(135deg, rgba(167, 139, 250, 0.8), rgba(139, 92, 246, 0.8)); }
+        .bg-v2 { background: linear-gradient(135deg, rgba(252, 211, 77, 0.8), rgba(251, 191, 36, 0.8)); }
+        .bg-v3 { background: linear-gradient(135deg, rgba(244, 114, 182, 0.8), rgba(236, 72, 153, 0.8)); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .model-card { padding: 20px; }
+            .data-grid { grid-template-columns: repeat(2, 1fr); }
+            .card-amount { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>NETGAINS</h1>
+    <p class="subtitle">Vertriebsmodelle Visualisierung // SYS.01</p>
+
+    <div class="calculator panel">
+        <label for="revenue">Abschlusswert (€):</label>
+        <input type="number" id="revenue" value="1000" min="0" step="100" oninput="calculateValues()">
+    </div>
+
+    <!-- Modell V1 -->
+    <div class="model-card panel">
+        <h2>Modell V1 <span style="color:var(--text-muted); font-size: 0.8rem; font-family:var(--font-body); margin-left:8px;">(2 EBENEN)</span></h2>
+        
+        <div class="scenario">
+            <div class="scenario-title">Szenario A: Direktabschluss (Vertriebler A)</div>
+            
+            <div class="visual-bar">
+                <div class="bar-segment bg-netgains" style="width: 50%;"></div>
+                <div class="bar-segment bg-v1" style="width: 50%;"></div>
+            </div>
+
+            <div class="data-grid">
+                <div class="data-card card-netgains">
+                    <div class="card-header"><div class="dot bg-netgains"></div> NetGains (50%)</div>
+                    <div class="card-amount amount" data-pct="0.5">500 €</div>
+                    <div class="founder-hint">Das sind <span class="founder-split"></span> pro Gründer</div>
+                </div>
+                <div class="data-card card-v1">
+                    <div class="card-header"><div class="dot bg-v1"></div> Vertriebler A (50%)</div>
+                    <div class="card-amount amount" data-pct="0.5">500 €</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario">
+            <div class="scenario-title">Szenario B: Teambuilding (Vertriebler B geworben von A)</div>
+            
+            <div class="visual-bar">
+                <div class="bar-segment bg-netgains" style="width: 50%;"></div>
+                <div class="bar-segment bg-v1" style="width: 15%;"></div>
+                <div class="bar-segment bg-v2" style="width: 35%;"></div>
+            </div>
+
+            <div class="data-grid">
+                <div class="data-card card-netgains">
+                    <div class="card-header"><div class="dot bg-netgains"></div> NetGains (50%)</div>
+                    <div class="card-amount amount" data-pct="0.5">500 €</div>
+                    <div class="founder-hint">Das sind <span class="founder-split"></span> pro Gründer</div>
+                </div>
+                <div class="data-card card-v1">
+                    <div class="card-header"><div class="dot bg-v1"></div> V-A (15%)</div>
+                    <div class="card-amount amount" data-pct="0.15">150 €</div>
+                </div>
+                <div class="data-card card-v2">
+                    <div class="card-header"><div class="dot bg-v2"></div> Vertriebler B (35%)</div>
+                    <div class="card-amount amount" data-pct="0.35">350 €</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modell V2 -->
+    <div class="model-card panel">
+        <h2>Modell V2 <span style="color:var(--text-muted); font-size: 0.8rem; font-family:var(--font-body); margin-left:8px;">(3 EBENEN)</span></h2>
+        
+        <div class="scenario">
+            <div class="scenario-title">Szenario C: Tiefe Struktur (C von B von A)</div>
+            
+            <div class="visual-bar">
+                <div class="bar-segment bg-netgains" style="width: 50%;"></div>
+                <div class="bar-segment bg-v1" style="width: 10%;"></div>
+                <div class="bar-segment bg-v2" style="width: 10%;"></div>
+                <div class="bar-segment bg-v3" style="width: 30%;"></div>
+            </div>
+
+            <div class="data-grid">
+                <div class="data-card card-netgains">
+                    <div class="card-header"><div class="dot bg-netgains"></div> NetGains (50%)</div>
+                    <div class="card-amount amount" data-pct="0.5">500 €</div>
+                    <div class="founder-hint">Davon <span class="founder-split"></span> pro Gründer</div>
+                </div>
+                <div class="data-card card-v1">
+                    <div class="card-header"><div class="dot bg-v1"></div> V-A (10%)</div>
+                    <div class="card-amount amount" data-pct="0.1">100 €</div>
+                </div>
+                <div class="data-card card-v2">
+                    <div class="card-header"><div class="dot bg-v2"></div> V-B (10%)</div>
+                    <div class="card-amount amount" data-pct="0.1">100 €</div>
+                </div>
+                <div class="data-card card-v3">
+                    <div class="card-header"><div class="dot bg-v3"></div> V-C (30%)</div>
+                    <div class="card-amount amount" data-pct="0.30">300 €</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // maximumFractionDigits: 0 entfernt die Kommastellen (z.B. 500 € statt 500,00 €) für einen cleaneren Look
+        const formatter = new Intl.NumberFormat('de-DE', { 
+            style: 'currency', 
+            currency: 'EUR',
+            maximumFractionDigits: 0 
+        });
+
+        function calculateValues() {
+            const revenueInput = document.getElementById('revenue').value;
+            const revenue = parseFloat(revenueInput) || 0;
+            
+            // 1. Berechne die normalen Segmente
+            const amountElements = document.querySelectorAll('.amount');
+            amountElements.forEach(el => {
+                const pct = parseFloat(el.getAttribute('data-pct'));
+                const calculatedValue = revenue * pct;
+                el.innerText = formatter.format(calculatedValue);
+            });
+
+            // 2. Berechne den Split für die Gründer (NetGains Anteil geteilt durch 3)
+            const netGainsTotal = revenue * 0.5; // NetGains bekommt immer 50%
+            const perFounder = netGainsTotal / 3;
+            
+            const splitElements = document.querySelectorAll('.founder-split');
+            splitElements.forEach(el => {
+                el.innerText = formatter.format(perFounder);
+            });
+        }
+
+        // Initiale Berechnung beim Laden der Seite
+        window.onload = calculateValues;
+    </script>
+</body>
+</html>
