@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetGains - Vertriebsstruktur Visualisierung</title>
     
+    <!-- Favicon -->
+    <link rel="icon" href="icon_aufteilung.webp" type="image/webp">
+    
     <!-- Typografie: Druk Wide Bold (Headlines) & Inter (Body) -->
     <link href="https://fonts.cdnfonts.com/css/druk-wide-bold" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -242,16 +245,18 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        .founder-hint {
-            font-size: 0.6rem;
+        .overhead-hint {
+            font-size: 0.55rem;
             color: var(--netgains-color);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
+            line-height: 1.5;
             border-top: 1px solid rgba(0, 240, 255, 0.2);
             padding-top: 8px;
             margin-top: 4px;
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+            opacity: 0.8;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
         }
 
         /* Colors */
@@ -294,7 +299,7 @@
                 <div class="data-card card-netgains">
                     <div class="card-header"><div class="dot bg-netgains"></div> NetGains (50%)</div>
                     <div class="card-amount amount" data-pct="0.5">500 €</div>
-                    <div class="founder-hint">Das sind <span class="founder-split"></span> pro Gründer</div>
+                    <div class="overhead-hint">Inkl. Buchhaltungssoftware, Buchhaltungstanten, Steuerberater, Anwälte, Büroräume</div>
                 </div>
                 <div class="data-card card-v1">
                     <div class="card-header"><div class="dot bg-v1"></div> Vertriebler A (50%)</div>
@@ -316,7 +321,7 @@
                 <div class="data-card card-netgains">
                     <div class="card-header"><div class="dot bg-netgains"></div> NetGains (50%)</div>
                     <div class="card-amount amount" data-pct="0.5">500 €</div>
-                    <div class="founder-hint">Das sind <span class="founder-split"></span> pro Gründer</div>
+                    <div class="overhead-hint">Inkl. Buchhaltungssoftware, Buchhaltungstanten, Steuerberater, Anwälte, Büroräume</div>
                 </div>
                 <div class="data-card card-v1">
                     <div class="card-header"><div class="dot bg-v1"></div> V-A (15%)</div>
@@ -348,7 +353,7 @@
                 <div class="data-card card-netgains">
                     <div class="card-header"><div class="dot bg-netgains"></div> NetGains (50%)</div>
                     <div class="card-amount amount" data-pct="0.5">500 €</div>
-                    <div class="founder-hint">Davon <span class="founder-split"></span> pro Gründer</div>
+                    <div class="overhead-hint">Inkl. Buchhaltungssoftware, Buchhaltungstanten, Steuerberater, Anwälte, Büroräume</div>
                 </div>
                 <div class="data-card card-v1">
                     <div class="card-header"><div class="dot bg-v1"></div> V-A (10%)</div>
@@ -362,6 +367,28 @@
                     <div class="card-header"><div class="dot bg-v3"></div> V-C (30%)</div>
                     <div class="card-amount amount" data-pct="0.30">300 €</div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modell V3 -->
+    <div class="model-card panel" style="border-color: rgba(0, 240, 255, 0.3); background: rgba(0, 240, 255, 0.02);">
+        <h2>Modell V3 <span style="color:var(--text-muted); font-size: 0.8rem; font-family:var(--font-body); margin-left:8px;">(IN PLANUNG)</span></h2>
+        
+        <div class="scenario">
+            <div class="scenario-title" style="color: var(--neon-cyan);">System-Roadmap & Skalierung</div>
+            
+            <div class="data-card" style="box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.05); border: 1px dashed rgba(0, 240, 255, 0.3);">
+                <ul style="list-style: none; padding: 15px; margin: 0; display: flex; flex-direction: column; gap: 15px;">
+                    <li style="display: flex; align-items: flex-start; gap: 12px; color: var(--text-main); font-size: 0.95rem;">
+                        <div class="dot bg-netgains" style="margin-top: 6px;"></div>
+                        <div>Es steht im Raum, dass eventuell <strong style="color: var(--neon-cyan);">58% an die Vertriebler</strong> gehen.</div>
+                    </li>
+                    <li style="display: flex; align-items: flex-start; gap: 12px; color: var(--text-main); font-size: 0.95rem;">
+                        <div class="dot bg-netgains" style="margin-top: 6px;"></div>
+                        <div>Viele Stufen sind in Aussicht (Deep-Level Structure / Automatisierte Skalierung).</div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -384,15 +411,6 @@
                 const pct = parseFloat(el.getAttribute('data-pct'));
                 const calculatedValue = revenue * pct;
                 el.innerText = formatter.format(calculatedValue);
-            });
-
-            // 2. Berechne den Split für die Gründer (NetGains Anteil geteilt durch 3)
-            const netGainsTotal = revenue * 0.5; // NetGains bekommt immer 50%
-            const perFounder = netGainsTotal / 3;
-            
-            const splitElements = document.querySelectorAll('.founder-split');
-            splitElements.forEach(el => {
-                el.innerText = formatter.format(perFounder);
             });
         }
 
